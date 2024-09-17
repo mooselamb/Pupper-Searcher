@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import PupperSearch from "./components/PupperSearch";
 
@@ -10,13 +10,13 @@ const App = () => {
     <Router>
       <Route exact path="/">
         {isAuthenticated ? (
-          <Redirect to="/pupper-search" />
+          <Navigate to="/pupper-search" />
         ) : (
           <Login isAuthenticated={setIsAuthenticated} />
         )}
       </Route>
       <Route path="/pupper-search">
-        {isAuthenticated ? <PupperSearch /> : <Redirect to="/" />}
+        {isAuthenticated ? <PupperSearch /> : <Navigate to="/" />}
       </Route>
     </Router>
   );
