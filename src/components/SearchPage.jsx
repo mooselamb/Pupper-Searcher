@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import PupperCard from './PupperCard';
-import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import PupperCard from "./PupperCard";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 
 const SearchPage = () => {
   const [breeds, setBreeds] = useState([]);
-  const [selectedBreed, setSelectedBreed] = useState('');
+  const [selectedBreed, setSelectedBreed] = useState("");
   const [dogs, setDogs] = useState([]);
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState("asc");
   const [favorites, setFavorites] = useState([]);
   const [pagination, setPagination] = useState({ next: null, prev: null });
 
@@ -15,35 +21,47 @@ const SearchPage = () => {
     const fetchBreeds = async () => {
       try {
         const res = await axios.get(
-          'https://frontend-take-home-service.fetch.com/dogs/breeds',
+          "https://frontend-take-home-service.fetch.com/dogs/breeds",
           { withCredentials: true }
         );
         setBreeds(res.data);
       } catch (error) {
-        console.error('Error fetching breeds ૮ ˘ﻌ˘ ა :', error);
+        console.error("Error fetching breeds ૮ ˘ﻌ˘ ა :", error);
       }
     };
 
     fetchBreeds();
   }, []);
 
-  const fetchDogs = async (query = '') => {
-    try {
-      const res = await axios.get(
-        `https://frontend-take-home-service.fetch.com/dogs/search${query}`,
-        { withCredentials: true }
-      );
-      const dogIds = res.data.resultIds;
-      setPagination({ next: res.data.next, prev: res.data.prev });
+  const BASE_URL = "https://frontend-take-home-service.fetch.com";
 
-      const dogsRes = await axios.post(
-        'https://frontend-take-home-service.fetch.com/dogs',
-        dogIds,
-        { withCredentials: true }
-      );
-      setDogs(dogsRes.data);
-    } catch (error) {
-      console.error('Error fetching dogs ૮ ˘ﻌ˘ ა :', error);
+  const fetchDogs = async (query = "") => {
+    {
+      try {
+        let url = "";
+        if (query.startsWith(BASE_URL)) {
+          url = query;
+        } else if (query.startsWith("/")) {
+          url = `${BASE_URL}${query}`;
+        } else if (query.startsWith("?")) {
+          url = `${BASE_URL}/dogs/search${query}`;
+        } else {
+          url = `${BASE_URL}/dogs/search`;
+        }
+
+        console.log("Fetching URL:", url);
+
+        const res = await axios.get(url, { withCredentials: true });
+        const dogIds = res.data.resultIds;
+        setPagination({ next: res.data.next, prev: res.data.prev });
+
+        const dogsRes = await axios.post(`${BASE_URL}/dogs`, dogIds, {
+          withCredentials: true,
+        });
+        setDogs(dogsRes.data);
+      } catch (error) {
+        console.error("Error fetching dogs ૮ ˘ﻌ˘ ა :", error);
+      }
     }
   };
 
@@ -70,13 +88,13 @@ const SearchPage = () => {
   const generateMatch = async () => {
     try {
       const res = await axios.post(
-        'https://frontend-take-home-service.fetch.com/dogs/match',
+        "https://frontend-take-home-service.fetch.com/dogs/match",
         favorites,
         { withCredentials: true }
       );
       alert(`Your match is dog with ID: ${res.data.match}`);
     } catch (error) {
-      console.error('Error generating match ૮ ˘ﻌ˘ ა :', error);
+      console.error("Error generating match ૮ ˘ﻌ˘ ა :", error);
     }
   };
 
@@ -85,7 +103,11 @@ const SearchPage = () => {
       <div className="flex justify-between items-center mb-4">
         <FormControl variant="outlined" className="w-1/3">
           <InputLabel>Breed</InputLabel>
-          <Select value={selectedBreed} onChange={handleBreedChange} label="Breed">
+          <Select
+            value={selectedBreed}
+            onChange={handleBreedChange}
+            label="Breed"
+          >
             <MenuItem value="">
               <em>All Breeds</em>
             </MenuItem>
@@ -99,16 +121,16 @@ const SearchPage = () => {
 
         <div>
           <button
-            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className="bg-gradient-to-r from-orange-400 to-pink-500 text-white font-semibold py-2 px-4 rounded shadow-lg transform transition-transform duration-200 hover:scale-105 active:scale-95"
           >
-            Sort: {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+            Sort: {sortOrder === "asc" ? "Ascending" : "Descending"}
           </button>
         </div>
 
         <button
           onClick={generateMatch}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-gradient-to-r from-green-400 to-blue-500 text-white font-semibold py-2 px-4 rounded shadow-lg transform transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
           disabled={favorites.length === 0}
         >
           Generate Match
@@ -128,14 +150,14 @@ const SearchPage = () => {
 
       <div className="flex justify-between mt-4">
         <button
-          onClick={() => fetchDogs(pagination.prev)}
+          onClick={() => pagination.prev && fetchDogs(pagination.prev)}
           disabled={!pagination.prev}
           className="bg-gray-500 text-white px-4 py-2 rounded disabled:opacity-50"
         >
           Previous
         </button>
         <button
-          onClick={() => fetchDogs(pagination.next)}
+          onClick={() => pagination.next && fetchDogs(pagination.next)}
           disabled={!pagination.next}
           className="bg-gray-500 text-white px-4 py-2 rounded disabled:opacity-50"
         >
