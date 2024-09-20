@@ -7,6 +7,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import PetsIcon from "@mui/icons-material/Pets";
 
 const PupperCard = ({ dog, isFavorite, toggleFavorite }) => {
   return (
@@ -31,7 +32,13 @@ const PupperCard = ({ dog, isFavorite, toggleFavorite }) => {
         className="absolute top-2 right-2 bg-white bg-opacity-75 rounded-full"
         onClick={() => toggleFavorite(dog.id)}
       >
-        {isFavorite ? <Favorite color="error" /> : <FavoriteBorder />}
+        {
+          isFavorite ? (
+            <PetsIcon htmlColor="#99F" />
+          ) : (
+            <PetsIcon />
+          ) /* <FavoriteBorder /> */
+        }
       </IconButton>
     </Card>
   );
