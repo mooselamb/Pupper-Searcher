@@ -31,7 +31,7 @@ const LoginPage = () => {
         className="bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg p-8 rounded-xl shadow-2xl max-w-md w-full transform transition-transform duration-200 hover:scale-105"
       >
         <h2 className="text-3xl font-bold mb-6 text-center text-green-400">
-          Welcome to Pupper Searcher!
+          Welcome to Pupper Searcher! 🐾
         </h2>
         <div className="mb-4">
           <label className="block mb-1 text-warm-dark">Name</label>
